@@ -1,3 +1,4 @@
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,24 @@ void main() {
   runApp(MyApp());
 }
 
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "AI Tutor",
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomePage(),
+
+    );
+  }
+}
+
+/*
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -209,4 +228,121 @@ class BigCard extends StatelessWidget {
     );
   }
 }
+*/
 
+/*
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'services/openai_service.dart';
+
+Future<void> main() async {
+await dotenv.load(fileName: ".env");
+
+  //runApp(MyApp());
+  runApp(HomePage());
+
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final String apiKey = dotenv.env['OPENAI_API_KEY'] ?? '';
+    final OpenAIService _openAIService = OpenAIService(apiKey);
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('OpenAI API Example')),
+        body: Center(
+          child: FutureBuilder(
+            future: _openAIService.generateResponse("What is Dart programming?"),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Text('Response: ${snapshot.data}');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+*/
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    // Get the screen size
+    final Size screenSize = MediaQuery.of(context).size;
+    final double containerWidth = screenSize.width * 0.6; // 80% of screen width
+    final double containerHeight = screenSize.height * 0.5; // 50% of screen height
+    final double leftSpacing = screenSize.width * 0.1; // 80% of screen width
+
+    return Scaffold( // Remove MaterialApp, it should be at the root
+      appBar: AppBar(
+        title: Text('Tinder for Kids MADE BY RAYNE, FOR RAYNE'),
+        centerTitle: true,
+        elevation: 10,
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute space
+        children: [
+          SizedBox.shrink(), // Empty space at the top
+          // Center the scrollable box
+          Row(
+            children: [
+              Spacer(),
+              
+              Center(
+                child: Container(
+                  width: containerWidth,
+                  height: containerHeight,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Add your content here
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'This is some sample text inside the scrollable box. ' * 10,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Container(height: 200, color: Colors.blue[100]),
+                        Container(height: 150, color: Colors.green[100]),
+                        Container(height: 300, color: Colors.red[100]),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: leftSpacing),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Center(
+              child: SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    print('ElevatedButton Pressed!');
+                  },
+                  child: Text('Find Match'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
