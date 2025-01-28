@@ -281,6 +281,7 @@ class HomePage extends StatelessWidget {
     final double containerWidth = screenSize.width * 0.6; // 80% of screen width
     final double containerHeight = screenSize.height * 0.5; // 50% of screen height
     final double leftSpacing = screenSize.width * 0.1; // 80% of screen width
+    final double buttonSpacing = screenSize.width * 0.005; // Spacing between buttons
 
     return Scaffold( // Remove MaterialApp, it should be at the root
       appBar: AppBar(
@@ -289,56 +290,82 @@ class HomePage extends StatelessWidget {
         elevation: 10,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute space
+        mainAxisAlignment: MainAxisAlignment.center, // Distribute space
         children: [
           SizedBox.shrink(), // Empty space at the top
           // Center the scrollable box
-          Row(
-            children: [
-              Spacer(),
-              
-              Center(
-                child: Container(
-                  width: containerWidth,
-                  height: containerHeight,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Add your content here
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'This is some sample text inside the scrollable box. ' * 10,
-                            style: TextStyle(fontSize: 16),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Row(
+              children: [
+                Spacer(),
+                Center(
+                  child: Container(
+                    width: containerWidth,
+                    height: containerHeight,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // Add your content here
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'This is some sample text inside the scrollable box. ' * 10,
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
-                        ),
-                        Container(height: 200, color: Colors.blue[100]),
-                        Container(height: 150, color: Colors.green[100]),
-                        Container(height: 300, color: Colors.red[100]),
-                      ],
+                          Container(height: 200, color: Colors.blue[100]),
+                          Container(height: 150, color: Colors.green[100]),
+                          Container(height: 300, color: Colors.red[100]),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(width: leftSpacing),
-            ],
+                SizedBox(width: leftSpacing),
+              ],
+            ),
           ),
+          SizedBox(height:0),
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0),
-            child: Center(
-              child: SizedBox(
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    print('ElevatedButton Pressed!');
-                  },
-                  child: Text('Find Match'),
-                ),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end, // Center the buttons
+              crossAxisAlignment: CrossAxisAlignment.center, // Center the buttons
+              children: [
+                Spacer(),
+                  Expanded( // Make TextField take available space
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Type here...',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  //height: 50,
+                  ElevatedButton(
+                    onPressed: () {
+                      print('Left Button Pressed!');
+                    },
+                    child: Text('Left Button'),
+                  ),
+                
+                SizedBox(width: buttonSpacing), // Space between buttons
+                
+                  
+                  ElevatedButton(
+                    onPressed: () {
+                      print('Right Button Pressed!');
+                    },
+                    child: Text('Find Match'),
+                  ),
+                
+                SizedBox(width: leftSpacing * 1.05),
+              ],  
             ),
           ),
         ],
