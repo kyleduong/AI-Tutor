@@ -337,8 +337,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Screen dimensions
     final Size screenSize = MediaQuery.of(context).size;
-    final double containerWidth = screenSize.width * 0.8;   // 80% of screen width
-    final double containerHeight = screenSize.height * 0.5; // 50% of screen height
+    final double containerWidth = screenSize.width * 0.7;//MediaQuery.of(context).size.width; // 80% of screen width
+    final double containerHeight = screenSize.height * 0.5;//MediaQuery.of(context).size.height; // 50% of screen height
 
     // Spacings
     final double sidebarSpace = screenSize.width * 0.1; // space from the NavigationRail
@@ -383,94 +383,97 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: Container(
               // Main background color (dark gray, for instance)
-              color: Color(0xFF212121),
-              child: Row(
+              color: Colors.grey[800],
+              child: Column(
                 children: [
-                  SizedBox(width: sidebarSpace),
-
+                  //SizedBox(width: sidebarSpace),
+                  Expanded(
                   // The main "outer" container
-                  Container(
-                    width: containerWidth,
-                    height: containerHeight,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[800],           // Slightly lighter than #212121
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Column(
-                        children: [
-                          // 1) Scrollable area
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Scrollable text here. ' * 10,
-                                  style: TextStyle(color: Colors.white),
+                    child:Container(
+                      width: containerWidth,
+                      //height: containerHeight,
+                      margin: const EdgeInsets.all(8.0), // Optional spacing
+                      // box appreance edits
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],           // Slightly lighter than #212121
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Column(
+                          children: [
+                            // 1) Scrollable area
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'This is some sample text ' * 100,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          
-                          // 2) Bottom area: a second Container for the textfield & buttons
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                // Slightly brighter color to highlight
-                                color: Colors.grey[700],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    // TextField expands to take leftover horizontal space
-                                    Expanded(
-                                      child: TextField(
-                                        style: TextStyle(color: Colors.white),
-                                        decoration: InputDecoration(
-                                          hintText: 'Type here...',
-                                          hintStyle: TextStyle(color: Colors.grey[400]),
-                                          border: OutlineInputBorder(),
+                            
+                            // 2) Bottom area: a second Container for the textfield & buttons
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  // Slightly brighter color to highlight
+                                  color: Colors.grey[700],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      // TextField expands to take leftover horizontal space
+                                      Expanded(
+                                        child: TextField(
+                                          style: TextStyle(color: Colors.white),
+                                          decoration: InputDecoration(
+                                            hintText: 'Type here...',
+                                            hintStyle: TextStyle(color: Colors.grey[400]),
+                                            border: OutlineInputBorder(),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(width: 10),
+                                      SizedBox(width: 10),
 
-                                    // Left Button
-                                    SizedBox(
-                                      width: buttonWidth,
-                                      height: buttonHeight,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          print('Left Button Pressed!');
-                                        },
-                                        child: Text('Left'),
+                                      // Left Button
+                                      SizedBox(
+                                        width: buttonWidth,
+                                        height: buttonHeight,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            print('Left Button Pressed!');
+                                          },
+                                          child: Text('Left'),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(width: buttonSpacing),
+                                      SizedBox(width: buttonSpacing),
 
-                                    // Right Button
-                                    SizedBox(
-                                      width: buttonWidth,
-                                      height: buttonHeight,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          print('Right Button Pressed!');
-                                        },
-                                        child: Text('Match'),
+                                      // Right Button
+                                      SizedBox(
+                                        width: buttonWidth,
+                                        height: buttonHeight,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            print('Right Button Pressed!');
+                                          },
+                                          child: Text('Match'),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
