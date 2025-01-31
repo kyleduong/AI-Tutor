@@ -413,7 +413,7 @@ class HomePage extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'This is some sample text ' * 500,
+                                    'No patterns to detect here. jfkdsal;faljdks' * 500,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -460,25 +460,34 @@ class HomePage extends StatelessWidget {
 
                                       // Left Button
                                       SizedBox(
-                                        width: buttonWidth,
-                                        height: buttonHeight,
+                                        width: 50,
+                                        height: 50,
                                         child: ElevatedButton(
                                           onPressed: () {
                                             print('Left Button Pressed!');
                                           },
-                                          child: Text('Search'),
+                                            style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero, // Removes default padding
+                                            alignment: Alignment.center, // Ensures the child is centered
+                                          ),
+                                          child: Icon(Icons.search),
                                         ),
                                       ),
+                                      
                                       SizedBox(width: buttonSpacing),
 
                                       // Right Button
                                       SizedBox(
-                                        width: buttonWidth,
-                                        height: buttonHeight,
+                                        width: 50,
+                                        height: 50,
                                         child: ElevatedButton(
                                           onPressed: () {
                                             print('Right Button Pressed!');
                                           },
+                                            style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero, // Removes default padding
+                                            alignment: Alignment.center, // Ensures the child is centered
+                                          ),
                                           child: Icon(Icons.edit_note_outlined), //Text('New Chat'),
                                         ),
                                       ),
