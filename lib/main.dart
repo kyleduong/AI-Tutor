@@ -357,7 +357,8 @@ class HomePage extends StatelessWidget {
           // Left Navigation Rail
           SafeArea(
             child: NavigationRail(
-              extended: false,
+              extended: true,
+              useIndicator: true,
               destinations: [
                 NavigationRailDestination(
                   icon: Icon(Icons.home),
@@ -409,7 +410,7 @@ class HomePage extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'This is some sample text ' * 100,
+                                    'This is some sample text ' * 500,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -433,12 +434,23 @@ class HomePage extends StatelessWidget {
                                       // TextField expands to take leftover horizontal space
                                       Expanded(
                                         child: TextField(
+                                          cursorColor: Colors.black,
                                           style: TextStyle(color: Colors.white),
                                           decoration: InputDecoration(
+                                            border: InputBorder.none,          // Removes default outline/underline
+                                            enabledBorder: InputBorder.none,   // Removes border when not focused
+                                            focusedBorder: InputBorder.none,   // Removes border when focused
                                             hintText: 'Type here...',
                                             hintStyle: TextStyle(color: Colors.grey[400]),
-                                            border: OutlineInputBorder(),
+                                            //border: OutlineInputBorder(),
+                                            // Focused (on tap) border
+                                            //focusedBorder: OutlineInputBorder(
+                                              //borderSide: BorderSide(color: Colors.grey), // same color => no blue
+                                            //),
                                           ),
+                                          keyboardType: TextInputType.multiline,
+                                          minLines: 1,  // Minimum height
+                                          maxLines: 6, // Allows infinite vertical expansion
                                         ),
                                       ),
                                       SizedBox(width: 10),
@@ -451,7 +463,7 @@ class HomePage extends StatelessWidget {
                                           onPressed: () {
                                             print('Left Button Pressed!');
                                           },
-                                          child: Text('Left'),
+                                          child: Text('Search'),
                                         ),
                                       ),
                                       SizedBox(width: buttonSpacing),
@@ -464,7 +476,7 @@ class HomePage extends StatelessWidget {
                                           onPressed: () {
                                             print('Right Button Pressed!');
                                           },
-                                          child: Text('Match'),
+                                          child: Icon(Icons.edit_note_outlined), //Text('New Chat'),
                                         ),
                                       ),
                                     ],
