@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'chatStack.dart';
 
 void main() {
   runApp(MyApp());
@@ -354,6 +355,8 @@ class HomePage extends StatelessWidget {
       ),
       body: Row(
         children: [
+          ChatStack(),
+          /*
           // Left Navigation Rail
           SafeArea(
             child: NavigationRail(
@@ -379,7 +382,7 @@ class HomePage extends StatelessWidget {
               },
             ),
           ),
-
+*/
           // Main Content Area
           Expanded(
             child: Container(
