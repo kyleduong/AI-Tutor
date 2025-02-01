@@ -16,6 +16,7 @@ class _mainContentState extends State<MainContent>{
   bool _shiftPressed = false;
 
   // This part i Just added
+  /*
 late final _focusNode = FocusNode(
   onKeyEvent: (FocusNode node, KeyEvent evt) {
     if (!HardwareKeyboard.instance.isShiftPressed &&
@@ -24,14 +25,32 @@ late final _focusNode = FocusNode(
         _performSearch(); // -> implement this
       }
       return KeyEventResult.handled;
-
+    
     } else if (HardwareKeyboard.instance.isShiftPressed &&
-        evt.logicalKey.keyLabel == 'Enter'){
-      _addAutomaticNewLine();
+      evt.logicalKey.keyLabel == 'Enter'){
+      _insertNewLine();
       return KeyEventResult.handled;
     } else {
       return KeyEventResult.ignored;
     }
+  },
+);
+*/
+
+late final _focusNode = FocusNode(
+  onKeyEvent: (FocusNode node, KeyEvent evt) {
+    //evt.logicalKey == LogicalKeyboardKey.enter
+    if (evt.logicalKey.keyLabel == 'Enter') {
+      if (evt is KeyDownEvent) {
+        if (HardwareKeyboard.instance.isShiftPressed) {
+          _insertNewLine();
+        } else {
+          _performSearch();
+        }
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   },
 );
 
@@ -43,11 +62,15 @@ late final _focusNode = FocusNode(
       print('Search Pressed!');
     }
 
-  void _addAutomaticNewLine() {
-    setState((){
-        _controller.text += '\n'; // Adds the new line
+  void _insertNewLine() {
+    final text = _controller.text;
+    final selection = _controller.selection;
+    final newText = text.replaceRange(selection.start, selection.end, '\n');
+    setState(() {
+      _controller.text = newText;
+      // Move cursor after newline
+      _controller.selection = TextSelection.collapsed(offset: selection.start + 1);
     });
-
   }
 
   @override
@@ -146,7 +169,7 @@ late final _focusNode = FocusNode(
                                     //onSubmitted: (value) => _performSearch(), // Also triggers on Enter
                                     textInputAction: TextInputAction.none, // so we handle it ourselves
                                   ),
-                                
+
                                 ),
                                 SizedBox(width: 10),
 
