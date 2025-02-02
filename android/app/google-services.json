@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1096761458761",
+    "firebase_url": "https://ai-tutor-b26e6-default-rtdb.firebaseio.com",
+    "project_id": "ai-tutor-b26e6",
+    "storage_bucket": "ai-tutor-b26e6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096761458761:android:02ea0bc802cbd95b643f98",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrcYPE3plmeqmi2TrQ2poqrcd63rEIGag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
