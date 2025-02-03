@@ -45,6 +45,7 @@ class _ChatStackState extends State<ChatStack> {
                       setState(() {
                         _selectedChatIndex = index;
                       });
+                      print("Index $_selectedChatIndex Selected");
                     },
                     child: Container(
                       color: isSelected ? Colors.grey[700] : null,
