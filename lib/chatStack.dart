@@ -2,13 +2,17 @@
 import 'package:flutter/material.dart';
 
 class ChatStack extends StatefulWidget {
+  
+  final void Function(int) onChatSelected; // callback
+  const ChatStack({Key? key, required this.onChatSelected}) : super(key: key);
+
   @override
   _ChatStackState createState() => _ChatStackState();
 }
 
 class _ChatStackState extends State<ChatStack> {
   final List<String> _chatTitles = ['Chat 1', 'Chat 2', 'Chat 3', 'Chat 4'];
-  int _selectedChatIndex = 0;
+  static int _selectedChatIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +49,8 @@ class _ChatStackState extends State<ChatStack> {
                       setState(() {
                         _selectedChatIndex = index;
                       });
+                      // 1) Call the callback to inform the parent
+                      widget.onChatSelected(_selectedChatIndex);
                       print("Index $_selectedChatIndex Selected");
                     },
                     child: Container(

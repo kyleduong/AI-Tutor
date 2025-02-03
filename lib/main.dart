@@ -346,8 +346,17 @@ class HomePage extends StatelessWidget {
 }
 */
 
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-class HomePage extends StatelessWidget {
+
+
+class _HomePageState extends State<HomePage> {
+
+  int _currentChatIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     // Screen dimensions
@@ -361,6 +370,8 @@ class HomePage extends StatelessWidget {
     final double buttonWidth   = screenSize.width * 0.07;
     final double buttonHeight  = screenSize.height * 0.05;
 
+    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Tinder for Kids MADE BY RAYNE, FOR RAYNE'),
@@ -369,8 +380,16 @@ class HomePage extends StatelessWidget {
       ),
       body: Row(
         children: [
-          ChatStack(),
-          MainContent(),
+          ChatStack(
+            onChatSelected: (newIndex) {
+              setState(() => _currentChatIndex = newIndex);
+            },
+          ),
+          Expanded(
+            child: MainContent(
+              chatIndex: _currentChatIndex,
+            ),
+          ),
           /*
           // Left Navigation Rail
           SafeArea(

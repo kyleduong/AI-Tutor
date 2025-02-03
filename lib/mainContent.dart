@@ -9,9 +9,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // Make sure you've run flutterfire configure:
 import 'firebase_options.dart';
 
+import 'chatStack.dart';
+
 class MainContent extends StatefulWidget{
   // WHY DO I NEED THIS ------------------------------------------------
-  //const MainContent({Key? key}) : super(key: key);
+  final int chatIndex;
+
+  // Typically you do need this constructor to receive the index from the parent
+  const MainContent({Key? key, required this.chatIndex}) : super(key: key);
 
   @override
   _mainContentState createState() => _mainContentState();
@@ -30,8 +35,12 @@ class _mainContentState extends State<MainContent>{
   bool _shiftPressed = false;
 
 
+
   // **FIREBASE**: Hardcode a chatId for demonstration
-  final String _chatId = "testChatId"; 
+
+  // Gets the selected chatIndex from chatStack class.
+  String get _chatId => 'testChatId ${widget.chatIndex}';
+
 
   @override
   void initState() {
