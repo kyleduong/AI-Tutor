@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 // **FIREBASE**: import Firebase packages
@@ -39,6 +40,7 @@ class _mainContentState extends State<MainContent>{
   // **FIREBASE**: Hardcode a chatId for demonstration
 
   // Gets the selected chatIndex from chatStack class.
+  // In the future, i need to replace testChatId with the UsersID from authentication, so it will be USERID + CHAT # ----------------------
   String get _chatId => 'testChatId ${widget.chatIndex}';
 
 
@@ -156,6 +158,10 @@ class _mainContentState extends State<MainContent>{
   void dispose() {
     _focusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -318,26 +324,28 @@ class _mainContentState extends State<MainContent>{
                                 SizedBox(width: buttonSpacing),
 
                                 // Reset Chat Button (clears local text, doesn't nuke Firestore)
-                                /*
+                                
                                 SizedBox(
                                   width: 50,
                                   height: 50,
                                   child: ElevatedButton(
-                                    onPressed: () {
+                                    // MAKING THIS THE TEMPORARY SIGN OUT BUTTON UNTIL I FIND A BETTER SPOT --------------------------
+                                    onPressed: _signOut,
+                                      /*
                                       setState(() {
                                         // GPT SAID TO REMOVE THIS BELOW -------------------------------------------------------
                                         //chat = "Start typing to see text here..."; // Reset text
                                         _controller.clear(); // Clear input field
                                       });
                                       print('Reset Chat Pressed!');
-                                    },
-                                      style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.zero, // Removes default padding
-                                      alignment: Alignment.center, // Ensures the child is centered
+                                      */
+                                    style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.zero, // Removes default padding
+                                    alignment: Alignment.center, // Ensures the child is centered
                                     ),
                                     child: Icon(Icons.edit_note_outlined), //Text('New Chat'),
                                   ),
-                                ),*/
+                                ),
                               ],
                             ),
                             ),
