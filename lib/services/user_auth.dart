@@ -31,8 +31,10 @@ class _SignInScreenState extends State<SignInScreen> {
       );
       // On success, authStateChanges will cause StreamBuilder to show HomeScreen
     } on FirebaseAuthException catch (e) {
+        if (!mounted) return;  // If widget's gone, skip
       setState(() => _errorMessage = e.message);
     } finally {
+    if (!mounted) return;  // If widget's gone, skip
       setState(() => _isLoading = false);
     }
   }

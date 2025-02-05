@@ -20,6 +20,11 @@ void main() async{
       options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Wait for the initial auth state to be loaded, this way the signout function works
+  await FirebaseAuth.instance.authStateChanges().first;
+
+  // This signs out the user on startup.
+  await FirebaseAuth.instance.signOut();
   runApp(MyApp());
 }
 
@@ -51,6 +56,7 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         // If snapshot has data, user is logged in -> show Home
+        
         if (snapshot.hasData) {
           return HomePage();
         }

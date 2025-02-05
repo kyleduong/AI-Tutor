@@ -326,8 +326,8 @@ class _mainContentState extends State<MainContent>{
                                 // Reset Chat Button (clears local text, doesn't nuke Firestore)
                                 
                                 SizedBox(
-                                  width: 50,
-                                  height: 50,
+                                  width: 40,
+                                  height: 40,
                                   child: ElevatedButton(
                                     // MAKING THIS THE TEMPORARY SIGN OUT BUTTON UNTIL I FIND A BETTER SPOT --------------------------
                                     onPressed: _signOut,
@@ -343,7 +343,7 @@ class _mainContentState extends State<MainContent>{
                                     padding: EdgeInsets.zero, // Removes default padding
                                     alignment: Alignment.center, // Ensures the child is centered
                                     ),
-                                    child: Icon(Icons.edit_note_outlined), //Text('New Chat'),
+                                    child: Icon(Icons.logout), //Text('New Chat'),
                                   ),
                                 ),
                               ],
