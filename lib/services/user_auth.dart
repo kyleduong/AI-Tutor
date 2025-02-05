@@ -9,6 +9,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  
   // Controllers for email + password
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -29,6 +30,14 @@ class _SignInScreenState extends State<SignInScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+
+      // Get UID AFTER successful sign-in
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        print('Signed in UID: ${user.uid}');
+        // You could also navigate to a new screen here
+      }
+
       // On success, authStateChanges will cause StreamBuilder to show HomeScreen
     } on FirebaseAuthException catch (e) {
         if (!mounted) return;  // If widget's gone, skip
@@ -51,6 +60,14 @@ class _SignInScreenState extends State<SignInScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+
+      // Get UID AFTER successful registration
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        print('Signed in UID: ${user.uid}');
+        // You could also navigate to a new screen here
+      }
+
       // On success, user is also signed in automatically
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -61,8 +78,14 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+    
+    
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In / Register'),

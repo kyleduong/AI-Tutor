@@ -10,8 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // Make sure you've run flutterfire configure:
 import 'firebase_options.dart';
 
-import 'chatStack.dart';
-
 class MainContent extends StatefulWidget{
   // WHY DO I NEED THIS ------------------------------------------------
   final int chatIndex;
@@ -32,17 +30,10 @@ class _mainContentState extends State<MainContent>{
   final TextEditingController _controller = TextEditingController(); // Text controller
   late final FocusNode _focusNode; // Focus Node to access keyboard events
 
-  int _selectedChatIndex = 0;
-  bool _shiftPressed = false;
-
-
-
-  // **FIREBASE**: Hardcode a chatId for demonstration
-
-  // Gets the selected chatIndex from chatStack class.
-  // In the future, i need to replace testChatId with the UsersID from authentication, so it will be USERID + CHAT # ----------------------
-  String get _chatId => 'testChatId ${widget.chatIndex}';
-
+  // Use UID in chatId along with the chat # selected
+  String get _chatId => '${widget.chatIndex}';
+  // Get the current user
+  User? get _user => FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -130,7 +121,7 @@ class _mainContentState extends State<MainContent>{
     if (text.isEmpty) return;
 
     // Hardcode a "senderId" for demonstration
-    const senderId = "userAUid";
+    const senderId = "User";
 
     setState(() {
       _controller.clear();
@@ -138,8 +129,11 @@ class _mainContentState extends State<MainContent>{
 
     // **FIREBASE**: Add a message doc to /chats/_chatId/messages
     await FirebaseFirestore.instance
-        .collection('chats')
+        // This Organizes chat collections by UID.
+        .collection(_user?.uid ?? "default")
+        // Different chats selected/made on left column
         .doc(_chatId)
+        // Specifys that its group of messages
         .collection('messages')
         .add({
       'text': text,
@@ -147,9 +141,15 @@ class _mainContentState extends State<MainContent>{
       'timestamp': FieldValue.serverTimestamp(),
     });
 
-
-
   }
+  //^^^^^^^^^^^^^^^^^^^
+  // This section is a databse visualization -----------------------------------------------------------------------------
+  /*
+
+  ("chats")Different chats belonging to different users -> (got from other class)the diffierent individual chats 
+  they have, visible in the left column -> (message collection)collection of messages -> (document)all individual messages
+
+  */
 
   // Pressing the "Search" button also sends a message
   void _onSearchPressed() {
@@ -220,7 +220,7 @@ class _mainContentState extends State<MainContent>{
                       Expanded(
                         child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
-                              .collection('chats')
+                              .collection(_user?.uid ?? "default")
                               .doc(_chatId)
                               .collection('messages')
                               .orderBy('timestamp', descending: false)
