@@ -32,7 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
       // On success, authStateChanges will cause StreamBuilder to show HomeScreen
     } on FirebaseAuthException catch (e) {
         if (!mounted) return;  // If widget's gone, skip
-      setState(() => _errorMessage = e.message);
+      setState(() => _errorMessage = "Incorrect email or password");//e.message);
     } finally {
     if (!mounted) return;  // If widget's gone, skip
       setState(() => _isLoading = false);
@@ -53,8 +53,10 @@ class _SignInScreenState extends State<SignInScreen> {
       );
       // On success, user is also signed in automatically
     } on FirebaseAuthException catch (e) {
-      setState(() => _errorMessage = e.message);
+      if (!mounted) return;
+      setState(() => _errorMessage = "Email or password already in Use" );//e.message);
     } finally {
+    if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }

@@ -132,6 +132,10 @@ class _mainContentState extends State<MainContent>{
     // Hardcode a "senderId" for demonstration
     const senderId = "userAUid";
 
+    setState(() {
+      _controller.clear();
+    });
+
     // **FIREBASE**: Add a message doc to /chats/_chatId/messages
     await FirebaseFirestore.instance
         .collection('chats')
@@ -143,9 +147,8 @@ class _mainContentState extends State<MainContent>{
       'timestamp': FieldValue.serverTimestamp(),
     });
 
-    setState(() {
-      _controller.clear();
-    });
+
+
   }
 
   // Pressing the "Search" button also sends a message
