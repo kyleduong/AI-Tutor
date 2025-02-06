@@ -53,6 +53,8 @@ class _ChatStackState extends State<ChatStack> {
                       widget.onChatSelected(_selectedChatIndex);
                       print("Index $_selectedChatIndex Selected");
                     },
+                    // This hover Color I can't see the effects   
+                    hoverColor: Colors.greenAccent,
                     child: Container(
                       color: isSelected ? Colors.grey[700] : null,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

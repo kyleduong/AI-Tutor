@@ -49,7 +49,7 @@ class _mainContentState extends State<MainContent>{
               _insertNewLine();
             } else {
               // ENTER => Send message
-              _sendMessage();
+              _onSearchPressed();
             }
           }
           return KeyEventResult.handled;
@@ -123,10 +123,6 @@ class _mainContentState extends State<MainContent>{
     // Hardcode a "senderId" for demonstration
     const senderId = "User";
 
-    setState(() {
-      _controller.clear();
-    });
-
     // **FIREBASE**: Add a message doc to /chats/_chatId/messages
     await FirebaseFirestore.instance
         // This Organizes chat collections by UID.
@@ -143,17 +139,44 @@ class _mainContentState extends State<MainContent>{
 
   }
   //^^^^^^^^^^^^^^^^^^^
-  // This section is a databse visualization -----------------------------------------------------------------------------
+  // This section is a databse visualization for -----------------------------------------------------------------------------
   /*
 
   ("chats")Different chats belonging to different users -> (got from other class)the diffierent individual chats 
   they have, visible in the left column -> (message collection)collection of messages -> (document)all individual messages
 
   */
+  Future<void> _apiResponse() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    const senderId = "AI";
+
+    // **FIREBASE**: Add a message doc to /chats/_chatId/messages
+    await FirebaseFirestore.instance
+        // This Organizes chat collections by UID.
+        .collection(_user?.uid ?? "default")
+        // Different chats selected/made on left column
+        .doc(_chatId)
+        // Specifys that its group of messages
+        .collection('messages')
+        .add({
+      'text': "This is what the AI is supposed to spit out.",
+      'senderId': senderId,
+      'timestamp': FieldValue.serverTimestamp(),
+  
+    });
+  }
 
   // Pressing the "Search" button also sends a message
   void _onSearchPressed() {
     _sendMessage();
+    _apiResponse();
+
+    setState(() {
+      _controller.clear();
+    });
+
     print('Search (Send) Pressed!');
   }
 
@@ -207,7 +230,7 @@ class _mainContentState extends State<MainContent>{
                 // box appreance edits
                 decoration: BoxDecoration(
                   color: Colors.grey[800],           // Slightly lighter than #212121
-                  border: Border.all(color: Colors.grey),
+                  //border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ClipRRect(
@@ -237,28 +260,57 @@ class _mainContentState extends State<MainContent>{
                             return SingleChildScrollView(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                // Use stretch so full-width items expand to fill the available space.
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: docs.map((doc) {
                                   final data = doc.data() as Map<String, dynamic>;
                                   final text = data['text'] ?? '';
                                   final senderId = data['senderId'] ?? '';
                                   final ts = data['timestamp'] as Timestamp?;
-                                  final timeStr = ts == null
-                                      ? ''
-                                      : ts.toDate().toLocal().toString();
+                                  final timeStr = ts == null ? '' : ts.toDate().toLocal().toString();
 
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 8),
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[600],
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      '$senderId: $text\n(time: $timeStr)',
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  );
+                                  // Check the sender ID to decide the layout.
+                                  if (senderId == "User") {
+                                    // For the user's messages, align right with a max width of 40%
+                                    return LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        // constraints.maxWidth is the width of the Column.
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Container(
+                                            
+                                            margin: const EdgeInsets.only(right:25.0, top: 16, bottom: 16),
+                                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                            constraints: BoxConstraints(
+                                              maxWidth: constraints.maxWidth * 0.75,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[600],
+                                              borderRadius: BorderRadius.circular(15),
+                                            ),
+                                            child: Text(
+                                              '$senderId: $text\n(time: $timeStr)',
+                                              style: const TextStyle(color: Colors.white),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    // For other messages, let the container take the full width.
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 16, top:16,  left: 25.0, right:25.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[600],
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Text(
+                                        '$senderId: $text\n(time: $timeStr)',
+                                        style: const TextStyle(color: Colors.white),
+                                      ),
+                                    );
+                                  }
                                 }).toList(),
                               ),
                             );
