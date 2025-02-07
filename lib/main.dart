@@ -78,6 +78,11 @@ class _HomePageState extends State<HomePage> {
 
   int _currentChatIndex = 0;
 
+  void _handleNewChat(int index) {
+    setState(() {
+      _currentChatIndex = index;
+    });
+  }
   
 
   @override
@@ -107,10 +112,12 @@ class _HomePageState extends State<HomePage> {
             onChatSelected: (newIndex) {
               setState(() => _currentChatIndex = newIndex);
             },
+            onNewChat: _handleNewChat,
           ),
           Expanded(
             child: MainContent(
               chatIndex: _currentChatIndex,
+              onNewChat: _handleNewChat,
             ),
           ),
           /*

@@ -13,9 +13,10 @@ import 'firebase_options.dart';
 class MainContent extends StatefulWidget{
   // WHY DO I NEED THIS ------------------------------------------------
   final int chatIndex;
+  final Function(int)? onNewChat;
 
   // Typically you do need this constructor to receive the index from the parent
-  const MainContent({Key? key, required this.chatIndex}) : super(key: key);
+  const MainContent({Key? key, required this.chatIndex, this.onNewChat,}) : super(key: key);
 
   @override
   _mainContentState createState() => _mainContentState();
@@ -31,9 +32,18 @@ class _mainContentState extends State<MainContent>{
   late final FocusNode _focusNode; // Focus Node to access keyboard events
 
   // Use UID in chatId along with the chat # selected
-  String get _chatId => '${widget.chatIndex}';
+  // + 1
+  String get _chatId => 'Chat ${widget.chatIndex}';
   // Get the current user
   User? get _user => FirebaseAuth.instance.currentUser;
+
+  // return the count of chats in the account collection
+  Future<int> _getMessageCount() async {
+    var collectionRef = FirebaseFirestore.instance.collection(_user?.uid ?? "default").doc(_chatId).collection('messages');
+    var snapshot = await collectionRef.count().get();
+    int documentCount = snapshot.count ?? 0;
+    return documentCount;
+  }
 
   @override
   void initState() {
@@ -114,28 +124,29 @@ class _mainContentState extends State<MainContent>{
       _controller.selection = TextSelection.collapsed(offset: selection.start + 1);
     });
   }
-
+  
   // "Send message": Writes a doc to Firestore
-  Future<void> _sendMessage() async {
+  Future<void> _sendMessage(var messagesAmount) async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
     // Hardcode a "senderId" for demonstration
     const senderId = "User";
-
     // **FIREBASE**: Add a message doc to /chats/_chatId/messages
     await FirebaseFirestore.instance
-        // This Organizes chat collections by UID.
-        .collection(_user?.uid ?? "default")
-        // Different chats selected/made on left column
-        .doc(_chatId)
-        // Specifys that its group of messages
-        .collection('messages')
-        .add({
-      'text': text,
-      'senderId': senderId,
-      'timestamp': FieldValue.serverTimestamp(),
+      // This Organizes chat collections by UID.
+      .collection(_user?.uid ?? "default")
+      // Different chats selected/made on left column
+      .doc(_chatId)
+      // Specifys that its group of messages
+      .collection('messages')
+      .add({
+        'text': text,
+        'senderId': senderId,
+        'timestamp': FieldValue.serverTimestamp(),
+        'number' : messagesAmount,
     });
+  //}
 
   }
   //^^^^^^^^^^^^^^^^^^^
@@ -146,10 +157,13 @@ class _mainContentState extends State<MainContent>{
   they have, visible in the left column -> (message collection)collection of messages -> (document)all individual messages
 
   */
-  Future<void> _apiResponse() async {
+  Future<void> _apiResponse(var messageAmount) async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
+    // the api response is the response after the user, so add 1
+    messageAmount += 1;
 
+    // AI id
     const senderId = "AI";
 
     // **FIREBASE**: Add a message doc to /chats/_chatId/messages
@@ -164,14 +178,33 @@ class _mainContentState extends State<MainContent>{
       'text': "This is what the AI is supposed to spit out.",
       'senderId': senderId,
       'timestamp': FieldValue.serverTimestamp(),
+      'number' : messageAmount,
   
     });
   }
 
   // Pressing the "Search" button also sends a message
-  void _onSearchPressed() {
-    _sendMessage();
-    _apiResponse();
+  void _onSearchPressed() async{
+    // add a chat if there are no messages (initial chat)
+    int messageAmount = await _getMessageCount(); 
+
+    // If this is the first message (no chats exist)
+    if (messageAmount == 0) {
+        // Create the parent chat document
+        await FirebaseFirestore.instance
+            .collection(_user?.uid ?? "default")
+            .doc(_chatId)
+            .set({
+                'title': _chatId,
+                'createdAt': FieldValue.serverTimestamp(),
+            });
+        
+        // Notify parent about new chat
+        widget.onNewChat?.call(widget.chatIndex);
+    }
+
+    _sendMessage(messageAmount);
+    _apiResponse(messageAmount);
 
     setState(() {
       _controller.clear();
@@ -246,7 +279,7 @@ class _mainContentState extends State<MainContent>{
                               .collection(_user?.uid ?? "default")
                               .doc(_chatId)
                               .collection('messages')
-                              .orderBy('timestamp', descending: false)
+                              .orderBy('number', descending: false)
                               .snapshots(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
