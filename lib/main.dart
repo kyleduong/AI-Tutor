@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'chatStack.dart';
 import 'mainContent.dart';
 import 'services/user_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,10 @@ void main() async{
 
   // This signs out the user on startup.
   await FirebaseAuth.instance.signOut();
+
+  // load env and get key
+  await dotenv.load(fileName: ".env");
+
   runApp(MyApp());
 }
 
@@ -120,33 +125,6 @@ class _HomePageState extends State<HomePage> {
               onNewChat: _handleNewChat,
             ),
           ),
-          /*
-          // Left Navigation Rail
-          SafeArea(
-            child: NavigationRail(
-              extended: true,
-              useIndicator: true,
-              destinations: [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text('Page 1'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text('Page 2'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text('Page 3'),
-                ),
-              ],
-              selectedIndex: 0,
-              onDestinationSelected: (value) {
-                print('selected: $value');
-              },
-            ),
-          ),
-*/
           // Main Content Area
           
         ],

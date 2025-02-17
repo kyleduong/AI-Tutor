@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'services/openai_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 // **FIREBASE**: import Firebase packages
@@ -26,6 +28,11 @@ class _mainContentState extends State<MainContent>{
 
   bool _initialized = false;  // track if Firebase is inited
   bool _error = false;
+
+  late final _openAIService = OpenAIService(dotenv.env['OPENAI_API_KEY'] ?? '');
+  
+  // init openAI with key
+  //late final OpenAIService _openAIService;
 
   String chat = "Start typing to see text here..."; // Initial text
   final TextEditingController _controller = TextEditingController(); // Text controller
@@ -158,29 +165,52 @@ class _mainContentState extends State<MainContent>{
 
   */
   Future<void> _apiResponse(var messageAmount) async {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
-    // the api response is the response after the user, so add 1
-    messageAmount += 1;
+    final userText = _controller.text.trim();
+    if (userText.isEmpty) return;
+    
+    try {
+      final aiResponse = await _openAIService.generateResponse(userText);
 
-    // AI id
-    const senderId = "AI";
+      // the api response is the response after the user, so add 1
+      messageAmount += 1;
 
-    // **FIREBASE**: Add a message doc to /chats/_chatId/messages
-    await FirebaseFirestore.instance
-        // This Organizes chat collections by UID.
+      // AI id
+      const senderId = "AI";
+      
+
+      // **FIREBASE**: Add a message doc to /chats/_chatId/messages
+      await FirebaseFirestore.instance
+          // This Organizes chat collections by UID.
+          .collection(_user?.uid ?? "default")
+          // Different chats selected/made on left column
+          .doc(_chatId)
+          // Specifys that its group of messages
+          .collection('messages')
+          .add({
+        'text': aiResponse,
+        'senderId': senderId,
+        'timestamp': FieldValue.serverTimestamp(),
+        'number' : messageAmount,
+    
+      });
+    } catch (e) {
+      // Handle errors gracefully.  Show an error message to the user, log the error, etc.
+      print("Error getting AI response: $e");
+
+      messageAmount += 1; // Increment even on error, to keep message order.
+
+      // **FIREBASE**: Add an ERROR message to the chat.  This is crucial for debugging and user feedback.
+      await FirebaseFirestore.instance
         .collection(_user?.uid ?? "default")
-        // Different chats selected/made on left column
         .doc(_chatId)
-        // Specifys that its group of messages
         .collection('messages')
         .add({
-      'text': "This is what the AI is supposed to spit out.",
-      'senderId': senderId,
-      'timestamp': FieldValue.serverTimestamp(),
-      'number' : messageAmount,
-  
-    });
+          'text': "Sorry, I encountered an error. Please try again.",
+          'senderId': "AI",
+          'timestamp': FieldValue.serverTimestamp(),
+          'number': messageAmount,
+        });
+    }
   }
 
   // Pressing the "Search" button also sends a message
@@ -451,146 +481,3 @@ class _mainContentState extends State<MainContent>{
     );
   }
 }
-
-/*
-import 'package:flutter/material.dart';
-
-
-class MainContent extends StatefulWidget {
-  @override
-  _mainContentState createState() => _mainContentState();
-}
-
-class _mainContentState extends State<MainContent> {
-  String chat = "Start typing to see text here..."; // Initial text
-  final TextEditingController _controller = TextEditingController(); // Text controller
-
-  int _selectedChatIndex = 0;
-
-  void _performSearch() {
-      setState((){
-        chat = _controller.text; // update chat with text in field
-      });
-      print('Search Pressed!');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
-    final double containerWidth = screenSize.width * 0.7;
-    final double containerHeight = screenSize.height * 0.5;
-    final double sidebarSpace = screenSize.width * 0.1;
-    final double buttonSpacing = screenSize.width * 0.005;
-    final double buttonWidth = screenSize.width * 0.07;
-    final double buttonHeight = screenSize.height * 0.05;
-
-    return Expanded(
-      child: Container(
-        color: Colors.grey[800],
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: containerWidth,
-                margin: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              chat,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[700],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: _controller,
-                                    cursorColor: Colors.black,
-                                    style: TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      hintText: 'Type here...',
-                                      hintStyle: TextStyle(color: Colors.grey[400]),
-                                    ),
-                                    keyboardType: TextInputType.multiline,
-                                    minLines: 1,
-                                    maxLines: 6,
-                                    onSubmitted: (_) { // we are passing _ as we dont need the string
-                                      _performSearch();
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: _performSearch,
-                                      style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                      alignment: Alignment.center,
-                                    ),
-                                    child: Icon(Icons.search),
-                                  ),
-                                ),
-                                SizedBox(width: buttonSpacing),
-                                SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        chat = "Start typing to see text here...";
-                                        _controller.clear();
-                                      });
-                                      print('Reset Chat Pressed!');
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                      alignment: Alignment.center,
-                                    ),
-                                    child: Icon(Icons.edit_note_outlined),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
